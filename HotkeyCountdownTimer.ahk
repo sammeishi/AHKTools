@@ -12,6 +12,9 @@
 #Requires AutoHotkey v2.0
 #SingleInstance Force
 
+; version
+VERSION := "1.14"
+
 
 ; 检查并设置自启动
 SetAutoStart()
@@ -37,7 +40,6 @@ SetAutoStart() {
 }
 
 
-VERSION := "1.12"
 
 ; ---------- 全局状态 ----------
 global g_remainSec   := 0
@@ -107,8 +109,9 @@ OnWMLButtonDown(wParam, lParam, msg, hwnd) {
         return
     }
 
-    ; 点击提醒弹窗 → 关闭弹窗
+    ; 点击提醒弹窗 → 停止音频 + 关闭弹窗
     if (hwnd = g_alertHwnd || DllCall("GetParent", "Ptr", hwnd, "Ptr") = g_alertHwnd) {
+		  SoundPlay(A_ScriptDir . "\silent.mp3")
         g_alertGui.Hide()
         return
     }
