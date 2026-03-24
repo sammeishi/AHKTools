@@ -13,7 +13,7 @@
 #SingleInstance Force
 
 ; version
-VERSION := "1.14"
+VERSION := "1.16"
 
 
 ; 检查并设置自启动
@@ -140,6 +140,16 @@ FormatRemain(sec) {
 }
 
 ; ============================================================
+;  播放提示音（先中断当前播放，避免快速操作时音频堆叠）
+; ============================================================
+PlayDing() {
+    DllCall("winmm\mciSendStringW", "Str", "stop ding", "Ptr", 0, "UInt", 0, "Ptr", 0)
+    DllCall("winmm\mciSendStringW", "Str", "close ding", "Ptr", 0, "UInt", 0, "Ptr", 0)
+    DllCall("winmm\mciSendStringW", "Str", "open `"" . A_ScriptDir . "\ding.mp3`" alias ding", "Ptr", 0, "UInt", 0, "Ptr", 0)
+    DllCall("winmm\mciSendStringW", "Str", "play ding", "Ptr", 0, "UInt", 0, "Ptr", 0)
+}
+
+; ============================================================
 ;  启动/叠加倒计时
 ; ============================================================
 StartCountdown(addSec) {
@@ -153,6 +163,7 @@ StartCountdown(addSec) {
         SetTimer(TickDown, 1000)
     }
     g_label.Value := FormatRemain(g_remainSec)
+    PlayDing()
 }
 
 ; ============================================================
@@ -215,8 +226,10 @@ HandleNumKey(minutes) {
 
 !0:: {
     global g_running
-    if g_running
+    if g_running {
         StopCountdown()
+        PlayDing()
+    }
 }
 
 !-:: {
@@ -225,6 +238,7 @@ HandleNumKey(minutes) {
         return
     g_remainSec := Max(1, g_remainSec - 1)
     g_label.Value := FormatRemain(g_remainSec)
+    PlayDing()
 }
 
 !=:: {
@@ -233,4 +247,5 @@ HandleNumKey(minutes) {
         return
     g_remainSec++
     g_label.Value := FormatRemain(g_remainSec)
+    PlayDing()
 }
