@@ -13,7 +13,7 @@
 #SingleInstance Force
 
 ; version
-VERSION := "1.16"
+VERSION := "1.17"
 
 
 ; 检查并设置自启动
@@ -161,7 +161,10 @@ StartCountdown(addSec) {
         g_running := true
         g_timerGui.Show(g_showOpt)
         SetTimer(TickDown, 1000)
+    } else {
+        g_timerGui.Show(g_showOpt)
     }
+    WinSetAlwaysOnTop(1, g_timerGui)
     g_label.Value := FormatRemain(g_remainSec)
     PlayDing()
 }
